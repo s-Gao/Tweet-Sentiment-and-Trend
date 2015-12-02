@@ -46,7 +46,6 @@ public class NewThread extends Thread{
             	
             	SNSWrapper.addSNS(snsString);
             
-
             	SQSWrapper.deleteMessage(msg);
 	}
 }
