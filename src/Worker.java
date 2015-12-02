@@ -27,13 +27,14 @@ public class Worker {
 		
 		
 		System.out.println("try subscribe");
+
         SNSWrapper.subscribeSNS();
-        
+
         
         
 		while(true){
 			try {
-				Thread.sleep(1000);
+				Thread.sleep(10);
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -41,71 +42,15 @@ public class Worker {
 			//System.out.println("worker working");
 			Message msg = SQSWrapper.receiveMessage();
 			if(msg!=null){
-				String str = new Gson().toJson(msg);
-				Gson gson = new Gson();
-				JsonObject jsonObject =gson.fromJson(str, JsonObject.class);
+				//String str = new Gson().toJson(msg);
 				
-				//System.out.println(jsonObject.toString());
-				String body = jsonObject.get("body").getAsString();
-				JsonObject jsonObject1 = gson.fromJson(body,JsonObject.class);
-				String text = jsonObject1.get("text").getAsString();
-				String lat = jsonObject1.get("lat").getAsString();
-				String lon = jsonObject1.get("lon").getAsString();
-				String kw = jsonObject1.get("kw").getAsString();
-				
-				double score =0.0;
-				APIService apiService = APIService.getInstanceWithKey("18390c237a26dce724bdb409f8d73235aa49f5b1");
-				String s=null;
-				
-					try {
-						s = apiService.getSentiment(text);
-					} 
-					catch (Exception e) {
-						e.printStackTrace();
-					}
-					JsonObject jsonObjectSenti = new Gson().fromJson(s, JsonObject.class);
-	                JsonObject jsonObjectSentiDoc = null;
-	                if(jsonObjectSenti.get("docSentiment")!=null){
-	                	jsonObjectSentiDoc = jsonObjectSenti.get("docSentiment").getAsJsonObject();
-	                    if (jsonObjectSentiDoc.get("score")!=null){
-	                    		score = jsonObjectSentiDoc.get("score").getAsDouble();
-	                    		
-	                    }
-	                    
-	                }
-                
-	                	
-	                	SNSInfo snsInfo = new SNSInfo(lon,lat,score,kw);
-	                	Gson snsGson = new Gson();
-	                	String snsString = snsGson.toJson(snsInfo,SNSInfo.class);
-	                	
-	                	SNSWrapper.addSNS(snsString);
-	                	
-	                	
-	                	
-	                	
-	                	
-	                	
-	                
-
-				SQSWrapper.deleteMessage(msg);
+				//System.out.println(str);
+					NewThread thread = new NewThread(msg);
+					thread.start();
 			}
 				
 		}
 	}
 	
 }
-class SNSInfo{
-	String lon=null;
-	String lat=null;
-	double senti=0.0;
-	String kw=null;
-	
-	SNSInfo(String lon,String lat, double score, String kw){
-		this.lon=lon;
-		this.lat=lat;
-		this.senti=score;
-		this.kw=kw;
-		
-	}
-}
+
