@@ -28,7 +28,7 @@ public class Worker {
 		
 		System.out.println("try subscribe");
 
-        SNSWrapper.subscribeSNS();
+	        SNSWrapper.subscribeSNS();
 
         
         
