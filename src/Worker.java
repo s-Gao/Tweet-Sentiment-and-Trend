@@ -42,11 +42,8 @@ public class Worker {
 			//System.out.println("worker working");
 			Message msg = SQSWrapper.receiveMessage();
 			if(msg!=null){
-				//String str = new Gson().toJson(msg);
-				
-				//System.out.println(str);
-					NewThread thread = new NewThread(msg);
-					thread.start();
+				NewThread thread = new NewThread(msg);
+				thread.start();
 			}
 				
 		}
